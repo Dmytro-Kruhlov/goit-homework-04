@@ -18,7 +18,7 @@ def hello(args):
     return "How can I help you?"
 
 
-@input_error
+
 def add(args):
 
     splited_args = args.split()
@@ -31,7 +31,7 @@ def add(args):
     return f"Contact {name} with phone number {phone} has been added."
 
 
-@input_error
+
 def change(args):
     splited_args = args.split()
 
@@ -44,9 +44,8 @@ def change(args):
     return f"The phone number for contact {name} has been changed to {phone}."
 
 
-@input_error
 def get_phone_number(args):
-    args = [args]
+    
 
     if len(args) != 1:
         raise ValueError
@@ -57,12 +56,10 @@ def get_phone_number(args):
         raise IndexError
 
 
-@input_error
-def show_all_contacts(args):
-    args = [args]
 
-    if len(args) != 1 or args[0] != "all":
-        raise ValueError
+def show_all_contacts(args):
+    
+
     if data:
         output = "Contacts:\n"
         for name, phone in data.items():
@@ -71,38 +68,40 @@ def show_all_contacts(args):
 
 
 COMMANDS = {
-    "add": add,
-    "hello": hello,
-    "change": change,
-    "phone": get_phone_number,
-    "show": show_all_contacts
-}
+    add: ["add",],
+    hello: ["hello"],
+    change: ["change"],
+    get_phone_number: ["phone"],
+    show_all_contacts: ["show all"] 
+    }
 
 
 @input_error
-def get_handler(command, args):
-    return COMMANDS[command](args)
+def get_handler(func, args):
+    return func(args)
 
 
 def main_loop():
 
     while True:
+        succesfull_run = False
         user_input = input(">>> ")
         user_input = user_input.lower()
         if user_input in ["good bye", "close", "exit"]:
             print("Good bye!")
             break
-
-        split_string = user_input.split(maxsplit=1)
-        if len(split_string) > 1:
-            command = split_string[0]
-            args = split_string[1]
-        else:
-            command = user_input
-            args = ""
-        result = get_handler(command, args)
-        print(result)
-
+        for func, key_words in COMMANDS.items():
+            for key in key_words:
+                if user_input.startswith(key):
+                    args = user_input.replace(key, "").strip()
+                    
+                    
+                    result = get_handler(func, args)
+                    succesfull_run = True
+                    print(result)
+                    break
+        if not succesfull_run:
+            print("Invalid command")
 
 if __name__ == "__main__":
     main_loop()
