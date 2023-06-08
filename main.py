@@ -14,6 +14,10 @@ def input_error(func):
     return wrapper
 
 
+def spliting(args):
+    return args.split()
+
+
 def hello(args):
     return "How can I help you?"
 
@@ -21,11 +25,11 @@ def hello(args):
 
 def add(args):
 
-    splited_args = args.split()
+    args = spliting(args)
 
-    if len(splited_args) != 2:
+    if len(args) != 2:
         raise ValueError
-    name, phone = splited_args
+    name, phone = args
     data[name] = phone
 
     return f"Contact {name} with phone number {phone} has been added."
@@ -33,11 +37,12 @@ def add(args):
 
 
 def change(args):
-    splited_args = args.split()
 
-    if len(splited_args) != 2:
+    args = spliting(args)
+
+    if len(args) != 2:
         raise ValueError
-    name, phone = splited_args
+    name, phone = args
     if name in data:
         data[name] = phone
 
@@ -45,8 +50,9 @@ def change(args):
 
 
 def get_phone_number(args):
-    
 
+    args = spliting(args)
+    
     if len(args) != 1:
         raise ValueError
     name = args[0]
@@ -59,7 +65,6 @@ def get_phone_number(args):
 
 def show_all_contacts(args):
     
-
     if data:
         output = "Contacts:\n"
         for name, phone in data.items():
@@ -94,8 +99,6 @@ def main_loop():
             for key in key_words:
                 if user_input.startswith(key):
                     args = user_input.replace(key, "").strip()
-                    
-                    
                     result = get_handler(func, args)
                     succesfull_run = True
                     print(result)
