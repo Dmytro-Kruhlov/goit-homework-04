@@ -22,7 +22,6 @@ def hello(args):
     return "How can I help you?"
 
 
-
 def add(args):
 
     args = spliting(args)
@@ -33,7 +32,6 @@ def add(args):
     data[name] = phone
 
     return f"Contact {name} with phone number {phone} has been added."
-
 
 
 def change(args):
@@ -62,7 +60,6 @@ def get_phone_number(args):
         raise IndexError
 
 
-
 def show_all_contacts(args):
     
     if data:
@@ -70,6 +67,8 @@ def show_all_contacts(args):
         for name, phone in data.items():
             output += f"{name}: {phone}\n"
         return output
+    else:
+        return "You don't have contacts in your phone book."
 
 
 COMMANDS = {
@@ -81,30 +80,34 @@ COMMANDS = {
     }
 
 
+
 @input_error
-def get_handler(func, args):
-    return func(args)
+def get_func(user_input):
+    succesfull_run = False
+    for func, key_words in COMMANDS.items():
+            for key in key_words:
+                if user_input.startswith(key):
+                    args = user_input.replace(key, "").strip()
+                    result = func(args)
+                    succesfull_run = True
+                    break
+    if not succesfull_run:
+        raise KeyError                
+    return result
 
 
 def main_loop():
 
     while True:
-        succesfull_run = False
+        
         user_input = input(">>> ")
         user_input = user_input.lower()
         if user_input in ["good bye", "close", "exit"]:
             print("Good bye!")
             break
-        for func, key_words in COMMANDS.items():
-            for key in key_words:
-                if user_input.startswith(key):
-                    args = user_input.replace(key, "").strip()
-                    result = get_handler(func, args)
-                    succesfull_run = True
-                    print(result)
-                    break
-        if not succesfull_run:
-            print("Invalid command")
+        result = get_func(user_input)
+        print(result)
+        
 
 if __name__ == "__main__":
     main_loop()
