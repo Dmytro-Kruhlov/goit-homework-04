@@ -29,9 +29,11 @@ def add(args):
     if len(args) != 2:
         raise ValueError
     name, phone = args
-    data[name] = phone
-
-    return f"Contact {name} with phone number {phone} has been added."
+    if name in data:
+        return "You already have a contact with this name"
+    else:
+        data[name] = phone
+        return f"Contact {name} with phone number {phone} has been added."
 
 
 def change(args):
@@ -84,10 +86,11 @@ COMMANDS = {
 @input_error
 def get_func(user_input):
     succesfull_run = False
+    user_input_lower = user_input.lower()
     for func, key_words in COMMANDS.items():
             for key in key_words:
-                if user_input.startswith(key):
-                    args = user_input.replace(key, "").strip()
+                if user_input_lower.startswith(key):
+                    args = user_input[len(key):].strip()
                     result = func(args)
                     succesfull_run = True
                     break
@@ -101,7 +104,7 @@ def main_loop():
     while True:
         
         user_input = input(">>> ")
-        user_input = user_input.lower()
+        
         if user_input in ["good bye", "close", "exit"]:
             print("Good bye!")
             break
